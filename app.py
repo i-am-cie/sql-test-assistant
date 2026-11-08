@@ -200,7 +200,7 @@ def index():
 
 @app.route('/api/generate', methods=['POST'])
 def api_generate():
-    data = request.json
+    data = request.get_json(silent=True) or {}
     gen_type = data.get('type')
     user_input = data.get('input', '')
     
