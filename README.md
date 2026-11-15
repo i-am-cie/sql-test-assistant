@@ -6,6 +6,7 @@ A local SQL testing workbench that asks an [Ollama](https://ollama.com/)-served 
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![LLM](https://img.shields.io/badge/LLM-Ollama-black)
 ![Offline](https://img.shields.io/badge/Offline-100%25-success)
+![Tests](https://img.shields.io/badge/tests-9%20passed-success)
 
 ## What it does
 
@@ -37,6 +38,15 @@ python app.py
 ```
 
 Then open <http://localhost:5003> in your browser. The Flask development server listens on port `5003`.
+
+## Run tests
+
+The repository ships with a pytest suite under `tests/` that covers the model-call contract (model name, user message), prompt assembly for each of the four modes, and the CLI flag dispatch. The Ollama call is mocked, so the suite does **not** require Ollama to be running or the `ollama` package to be installed.
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest tests/ -v
+```
 
 ## Usage
 
@@ -80,7 +90,7 @@ export OLLAMA_HOST=http://192.168.1.20:11434   # Windows PowerShell: $env:OLLAMA
 3. Each function fills a Chinese prompt that states the checks or analysis dimensions to cover and calls `ollama.chat(model=MODEL, ...)`.
 4. The model's Markdown (SQL snippets, tables, recommendations) is returned unchanged and displayed as plain text.
 
-Nothing is parsed, linted or validated; there is no database connection and no execution of the generated SQL.
+The repository's own pytest suite covers only the prompt assembly and dispatch code; it does **not** parse the generated SQL or validate it against a schema. Nothing is parsed, linted or validated; there is no database connection and no execution of the generated SQL.
 
 ## Limitations
 
@@ -99,4 +109,4 @@ MIT © 2026 i-am-cie — see [LICENSE](LICENSE).
 
 ## 中文说明
 
-这是一个本地 AI SQL 测试助手：通过本机 Ollama 大模型，根据自然语言需求生成数据质量检查 SQL、数据库逻辑测试用例，对 SQL 语句做性能分析与优化建议，并审查表结构设计。支持网页四种模式，也提供命令行 `--quality / --test / --analyze / --schema`。所有数据都在本机，无需 API Key，也不需要连接数据库——工具只生成 SQL 文本，不会执行。使用前安装 Ollama 并拉取 `qwen2.5:7b`，然后 `pip install -r requirements.txt`、`python app.py`，浏览器打开 http://localhost:5003。生成的 SQL 需人工核对后再执行。
+这是一个本地 AI SQL 测试助手：通过本机 Ollama 大模型，根据自然语言需求生成数据质量检查 SQL、数据库逻辑测试用例，对 SQL 语句做性能分析与优化建议，并审查表结构设计。支持网页四种模式，也提供命令行 `--quality / --test / --analyze / --schema`。所有数据都在本机，无需 API Key，也不需要连接数据库——工具只生成 SQL 文本，不会执行。使用前安装 Ollama 并拉取 `qwen2.5:7b`，然后 `pip install -r requirements.txt`、`python app.py`，浏览器打开 http://localhost:5003。仓库自带 pytest 单元测试（`tests/` 目录），覆盖四种模式 prompt 拼装、模型调用参数和命令行分发，模型调用已打桩，运行测试无需启动 Ollama：`pip install -r requirements-dev.txt` 后 `python -m pytest tests/ -v`。生成的 SQL 需人工核对后再执行。
